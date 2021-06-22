@@ -2,11 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter1/image_widget.dart';
 import 'package:flutter1/images.dart';
+import 'package:flutter1/todo_app/ui/todo_main_page.dart';
 import 'package:flutter1/top_selling_widget.dart';
 
 void main() {
   runApp(MaterialApp(
-    home: Page1(),
+    home: TodoMainPage(),
   ));
 }
 
