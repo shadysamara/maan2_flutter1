@@ -2,12 +2,42 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter1/image_widget.dart';
 import 'package:flutter1/images.dart';
+import 'package:flutter1/navigation_test/error_page.dart';
+import 'package:flutter1/navigation_test/page1_test.dart';
+import 'package:flutter1/navigation_test/page2_test.dart';
+import 'package:flutter1/navigation_test/page3_test.dart';
 import 'package:flutter1/todo_app/ui/todo_main_page.dart';
 import 'package:flutter1/top_selling_widget.dart';
 
 void main() {
   runApp(MaterialApp(
-    home: TodoMainPage(),
+    home: Page1Nav(),
+    routes: {
+      Page1Nav.routeName: (context) => Page1Nav(),
+      Page2Nav.routeName: (context) => Page2Nav(''),
+      Page3Nav.routeName: (context) => Page3Nav(0),
+    },
+    onGenerateRoute: (RouteSettings routeSettings) {
+      String routeName = routeSettings.name;
+      var arguments = routeSettings.arguments;
+
+      switch (routeName) {
+        case ('aaa'):
+          return MaterialPageRoute(builder: (context) {
+            return Page2Nav(arguments);
+          });
+          break;
+        case ('bbb'):
+          return MaterialPageRoute(builder: (context) {
+            return Page2Nav(arguments);
+          });
+          break;
+        default:
+          return MaterialPageRoute(builder: (context) {
+            return ErrorPage();
+          });
+      }
+    },
   ));
 }
 
