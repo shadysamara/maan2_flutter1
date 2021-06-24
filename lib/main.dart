@@ -1,18 +1,32 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter1/forms/new_task.dart';
 import 'package:flutter1/image_widget.dart';
 import 'package:flutter1/images.dart';
 import 'package:flutter1/navigation_test/error_page.dart';
 import 'package:flutter1/navigation_test/page1_test.dart';
 import 'package:flutter1/navigation_test/page2_test.dart';
 import 'package:flutter1/navigation_test/page3_test.dart';
+import 'package:flutter1/services/router_service.dart';
+import 'package:flutter1/services/sharedprefrences_helper.dart';
 import 'package:flutter1/todo_app/ui/todo_main_page.dart';
 import 'package:flutter1/top_selling_widget.dart';
 
-void main() {
+/*
+1- create three pages called (loginPage, HomePage, ProfilePage)
+2- handle using onGenerateRoutes with the named routes that is coming from the pages
+3- pass different arguments between pages using onGenerateRoutes
+4- define error page that will be displayed in case of unkonwn route
+
+*/
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SpHelper.spHelper.initSharedPrefernces();
   runApp(MaterialApp(
-    home: Page1Nav(),
+    navigatorKey: NavigationService.navigatorKey,
+    home: SplachScreen(),
     routes: {
+      // '/': (context) => NewTaskPage(),
       Page1Nav.routeName: (context) => Page1Nav(),
       Page2Nav.routeName: (context) => Page2Nav(''),
       Page3Nav.routeName: (context) => Page3Nav(0),
@@ -37,6 +51,11 @@ void main() {
             return ErrorPage();
           });
       }
+    },
+    onUnknownRoute: (RouteSettings routesettings) {
+      return MaterialPageRoute(builder: (context) {
+        return ErrorPage();
+      });
     },
   ));
 }
@@ -269,9 +288,78 @@ class _Page1State extends State<Page1> with SingleTickerProviderStateMixin {
     );
   }
 }
+
 /*
 1- create assets folder in your project root folder
 2- put your images in assets folder
 3- define your images in pubspec.yaml
 4- use Image.asset widget to display your image
 */
+class SplachScreen extends StatefulWidget {
+  @override
+  _SplachScreenState createState() => _SplachScreenState();
+}
+
+class _SplachScreenState extends State<SplachScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    bool isLogged = SpHelper.spHelper.getValue();
+    Future.delayed(Duration(seconds: 3)).then((value) {
+      if (isLogged) {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return Home();
+        }));
+      } else {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return Login();
+        }));
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+      body: Center(
+        child: FlutterLogo(),
+      ),
+    );
+  }
+}
+
+class Login extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            child: Text('LOGIN'),
+          ),
+          ElevatedButton(
+              onPressed: () {
+                SpHelper.spHelper.setIsLogged();
+              },
+              child: Text('LOGIN'))
+        ],
+      ),
+    );
+  }
+}
+
+class Home extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+      body: Center(
+        child: Text('HOME'),
+      ),
+    );
+  }
+}
