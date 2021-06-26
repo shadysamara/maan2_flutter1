@@ -6,17 +6,22 @@ import 'package:flutter1/todo_app/ui/widgets/task_widget.dart';
 class CompleteTasks extends StatelessWidget {
   Function updating;
   Function removing;
-  CompleteTasks(this.updating, this.removing);
+  List<Task> tasks;
+  CompleteTasks(this.tasks, this.updating, this.removing);
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return ListView.builder(
-        itemCount: tasks.where((element) => element.isComplete).length,
-        itemBuilder: (context, index) {
-          return TaskWidget(
-              tasks.where((element) => element.isComplete).toList()[index],
-              updating,
-              removing);
-        });
+    return tasks == null
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : ListView.builder(
+            itemCount: tasks.where((element) => element.isComplete).length,
+            itemBuilder: (context, index) {
+              return TaskWidget(
+                  tasks.where((element) => element.isComplete).toList()[index],
+                  updating,
+                  removing);
+            });
   }
 }

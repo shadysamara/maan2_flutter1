@@ -9,6 +9,8 @@ import 'package:flutter1/navigation_test/page2_test.dart';
 import 'package:flutter1/navigation_test/page3_test.dart';
 import 'package:flutter1/services/router_service.dart';
 import 'package:flutter1/services/sharedprefrences_helper.dart';
+import 'package:flutter1/services/sqlite_helper.dart';
+import 'package:flutter1/todo_app/models/task_model.dart';
 import 'package:flutter1/todo_app/ui/todo_main_page.dart';
 import 'package:flutter1/top_selling_widget.dart';
 
@@ -22,11 +24,12 @@ import 'package:flutter1/top_selling_widget.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SpHelper.spHelper.initSharedPrefernces();
+  await SqliteHelper.sqliteHelper.initDatabase();
   runApp(MaterialApp(
     navigatorKey: NavigationService.navigatorKey,
-    home: SplachScreen(),
+    home: TodoMainPage(),
     routes: {
-      // '/': (context) => NewTaskPage(),
+      'newTask': (context) => NewTaskPage(),
       Page1Nav.routeName: (context) => Page1Nav(),
       Page2Nav.routeName: (context) => Page2Nav(''),
       Page3Nav.routeName: (context) => Page3Nav(0),
@@ -358,7 +361,13 @@ class Home extends StatelessWidget {
     // TODO: implement build
     return Scaffold(
       body: Center(
-        child: Text('HOME'),
+        child: ElevatedButton(
+          onPressed: () {
+            SqliteHelper.sqliteHelper
+                .insertNewTask(Task('playing football', false));
+          },
+          child: Text('Test db'),
+        ),
       ),
     );
   }

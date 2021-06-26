@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter1/services/sqlite_helper.dart';
+import 'package:flutter1/todo_app/models/task_model.dart';
 import 'package:string_validator/string_validator.dart';
 
 class NewTaskPage extends StatefulWidget {
@@ -13,11 +15,13 @@ class _NewTaskPageState extends State<NewTaskPage> {
   String date;
   TextEditingController controller = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  saveForm() {
+  saveForm() async {
     bool isValidate = formKey.currentState.validate();
     if (isValidate == true) {
       formKey.currentState.save();
-      print(taskName);
+      Task task = Task(taskName, isCompleted);
+      await SqliteHelper.sqliteHelper.insertNewTask(task);
+      Navigator.pop(context);
     } else {
       print('error');
     }

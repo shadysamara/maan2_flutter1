@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter1/forms/new_task.dart';
+import 'package:flutter1/services/router_service.dart';
+import 'package:flutter1/services/sqlite_helper.dart';
 import 'package:flutter1/todo_app/data/dummy_data.dart';
 import 'package:flutter1/todo_app/models/task_model.dart';
 import 'package:flutter1/todo_app/ui/pages/all_tasks_page.dart';
@@ -11,15 +14,28 @@ class TodoMainPage extends StatefulWidget {
 }
 
 class _TodoMainPageState extends State<TodoMainPage> {
-  updateTask(Task task) {
-    int index = tasks.indexOf(task);
-    tasks[index].isComplete = !tasks[index].isComplete;
+  List<Task> tasks;
+
+  updateTask(Task task) async {
+    await SqliteHelper.sqliteHelper.updateTask(task);
+    getAllTasks();
+  }
+
+  removeTask(Task task) async {
+    await SqliteHelper.sqliteHelper.deleteTask(task.id);
+    getAllTasks();
+  }
+
+  getAllTasks() async {
+    tasks = await SqliteHelper.sqliteHelper.getAllTasks();
     setState(() {});
   }
 
-  removeTask(Task task) {
-    tasks.remove(task);
-    setState(() {});
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getAllTasks();
   }
 
   @override
@@ -29,6 +45,18 @@ class _TodoMainPageState extends State<TodoMainPage> {
         length: 3,
         child: Scaffold(
           appBar: AppBar(
+            actions: [
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () async {
+                  await Navigator.push(context,
+                      MaterialPageRoute(builder: (context) {
+                    return NewTaskPage();
+                  }));
+                  getAllTasks();
+                },
+              )
+            ],
             title: Text('Todo App'),
             bottom: TabBar(tabs: [
               Tab(
@@ -43,9 +71,9 @@ class _TodoMainPageState extends State<TodoMainPage> {
             ]),
           ),
           body: TabBarView(children: [
-            AllTasks(updateTask, removeTask),
-            CompleteTasks(updateTask, removeTask),
-            InCompleteTasks(updateTask, removeTask)
+            AllTasks(tasks, updateTask, removeTask),
+            CompleteTasks(tasks, updateTask, removeTask),
+            InCompleteTasks(tasks, updateTask, removeTask)
           ]),
         ));
   }
